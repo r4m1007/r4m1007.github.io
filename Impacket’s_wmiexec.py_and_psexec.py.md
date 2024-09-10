@@ -6,11 +6,12 @@ Understanding Impacket
 Impacket is a collection of Python libraries designed for network protocols like SMB, WMI, and NTLM. It is essential for conducting lateral movement, privilege escalation, and credential harvesting. In this post, I focus on two key Impacket tools: psexec.py and wmiexec.py.
 
 
-What is psexec.py?
+<h1><strong>What is psexec.py?</strong></h1>
 
 
 
-<img src="{{ "assets/images/Picture1.png" | relative_url }}" alt="Screenshot" style="width:700px;">
+
+<img src="{{ "assets/images/impacket1/1.png" | relative_url }}" alt="Screenshot" style="width:700px;">
 
 
  
@@ -27,50 +28,56 @@ psexec.py is a tool that replicates Microsoft’s PsExec functionality, allowing
 
 
 
+<h1><strong>Detection:</strong></h1>
 
-Detection:
-
- 
-
- 
+<img src="{{ "assets/images/impacket1/2.png" | relative_url }}" alt="Screenshot" style="width:700px;">
+<img src="{{ "assets/images/impacket1/3.png" | relative_url }}" alt="Screenshot" style="width:700px;">
 Service Creation: Logs in Windows Event ID 7045.
 
 
- 
+<img src="{{ "assets/images/impacket1/4.png" | relative_url }}" alt="Screenshot" style="width:700px;">
 File Uploads: Monitored via SMB traffic on port 445.
 
 
- 
+<img src="{{ "assets/images/impacket1/5.png" | relative_url }}" alt="Screenshot" style="width:700px;">
 Windows Defender flagged and blocked psexec.py due to the file-based activity and new service creation.
 
-What is wmiexec.py?
+<h1><strong>What is wmiexec.py?</strong></h1> 
+
+
 wmiexec.py uses Windows Management Instrumentation (WMI) for command execution without file uploads. Here’s how it works:
 1.	Executes Commands In-Memory: Runs commands directly in memory, avoiding disk writes.
 2.	Uses RPC and WMI Service: Relies on port 135 for WMI communications.
 3.	No New Files or Services: Avoids detection through file-based and service-based mechanisms.
 
- 
+<img src="{{ "assets/images/impacket1/6.png" | relative_url }}" alt="Screenshot" style="width:700px;">
 
 Defender did not detect wmiexec.py due to its fileless operation, making it stealthier than psexec.py.
-Why Was psexec.py Blocked but wmiexec.py Wasn’t?
+
+
+h1><strong>Why Was psexec.py Blocked but wmiexec.py Wasn’t?</strong></h1> 
 psexec.py triggers antivirus/EDR alerts by creating files and services. Conversely, wmiexec.py avoids file creation, making it less detectable by traditional AV solutions. However, it can still be detected via WMI logs and unusual port traffic.
 Detectability and Mitigation
+
+
 Even though wmiexec.py is stealthier, it can be detected by:
 
 
- 
+<img src="{{ "assets/images/impacket1/7.png" | relative_url }}" alt="Screenshot" style="width:700px;">
 Monitoring Port 135 and 445 Traffic: Look for unusual activity.
 
 
- 
+<img src="{{ "assets/images/impacket1/8.png" | relative_url }}" alt="Screenshot" style="width:700px;"> 
 Checking Command-Line Logs: Event logs can reveal suspicious commands.
 
 
 
- 
+<img src="{{ "assets/images/impacket1/9.png" | relative_url }}" alt="Screenshot" style="width:700px;">
 Analyzing Windows Login Activities: Check Event ID 4624 for unusual login patterns that may indicate remote command execution.
 Reviewing WMI Event Logs and Windows login: Look for Event ID 4688 to detect remote command executions.
 Post-Execution Steps with wmiexec.py
+
+
 Once access is gained, you can perform various tasks:
 •	Dump Credentials: Use tools like Mimikatz or secretsdump.py.
 •	Enable Persistence: Create new users or scheduled tasks.
