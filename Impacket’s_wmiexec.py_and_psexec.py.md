@@ -5,6 +5,9 @@ What is psexec.py?
 
 [psexec.py](assets/images/Picture1.png){:style="width:50%;"}
 
+<img src="{{ "assets/images/Picture1.png" | relative_url }}" alt="Screenshot" style="width:500px;">
+
+
  
 psexec.py is a tool that replicates Microsoft’s PsExec functionality, allowing remote command execution over SMB. Here’s how it operates:
 1.	Creates a Remote Service: Uploads a randomly named executable to the hidden ADMIN$ share on the target machine.
