@@ -17,7 +17,7 @@ Welcome to my blog! Here you'll find my write-ups on various topics.
 
 ### Write-Ups
 
-- [Privilege Escalation Techniques](./posts/privilege-escalation.md)
+- [Privilege Escalation Techniques](./Impacket’s_wmiexec.py_and_psexec.py.md) 
 - [Network Security Tips](./posts/network-security.md)
 - [Advanced Hacking Methods](./posts/advanced-hacking.md)
 
