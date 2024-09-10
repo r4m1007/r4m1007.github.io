@@ -1,11 +1,16 @@
 This post explores the use of Impacket’s wmiexec.py and psexec.py, detailing their functions, detection methods, and my practical experiences with them.
 Understanding Impacket
+
+
+
 Impacket is a collection of Python libraries designed for network protocols like SMB, WMI, and NTLM. It is essential for conducting lateral movement, privilege escalation, and credential harvesting. In this post, I focus on two key Impacket tools: psexec.py and wmiexec.py.
+
+
 What is psexec.py?
 
-[psexec.py](assets/images/Picture1.png){:style="width:50%;"}
 
-<img src="{{ "assets/images/Picture1.png" | relative_url }}" alt="Screenshot" style="width:500px;">
+
+<img src="{{ "assets/images/Picture1.png" | relative_url }}" alt="Screenshot" style="width:700px;">
 
 
  
