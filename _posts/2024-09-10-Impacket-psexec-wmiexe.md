@@ -1,5 +1,5 @@
 ---
-title: Impacket’s wmiexec.py and psexec.py How They Work and How to Detect
+title: Impacket’s wmiexec.py and psexec.py; How They Work and How to Detect
 
 published: true
 ---
