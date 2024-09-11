@@ -1,5 +1,5 @@
 ---
-title: Impacket’s wmiexec.py and psexec.py
+title: Impacket’s wmiexec.py and psexec.py: How They Work and How to Detect
 
 published: true
 ---
@@ -63,7 +63,7 @@ To detect `psexec.py` usage, monitor Windows Event ID 7045 for the installation 
 3.	**No New Files or Services**: Avoids detection through file-based and service-based mechanisms.
 
 
- ### ![6](https://github.com/user-attachments/assets/ea775741-5f4a-48c5-8a32-1803f1e55fcd)
+  ![6](https://github.com/user-attachments/assets/ea775741-5f4a-48c5-8a32-1803f1e55fcd)
 *   Defender did not detect `wmiexec.py` due to its fileless operation, making it stealthier than `psexec.py`
 
 ### [](#header-3) Why Was `psexec.py` Blocked but `wmiexec.py` Wasn't
@@ -77,9 +77,10 @@ To detect `psexec.py` usage, monitor Windows Event ID 7045 for the installation 
 
 To detect `wmiexec.py`, monitor network traffic on ports 135 (RPC) and 445 (SMB) for unusual activity, check for suspicious command lines involving wmic.exe or powershell.exe with WMI arguments, and watch for commands targeting local admin shares. Additionally, track Windows login events (Event ID 4624) for unexpected or high-privilege logins, as these can indicate potential remote command execution.
 
+Even though wmiexec.py is stealthier, it can be detected by:
 
 ![7](https://github.com/user-attachments/assets/8715f3ad-9813-4f2a-bd98-336caf683f5e)
-Even though wmiexec.py is stealthier, it can be detected by:
+
 *   **Monitoring Port 135 and 445 Traffic:** Look for unusual activity.
 
 ![8](https://github.com/user-attachments/assets/5cd7a100-1ba3-4201-9453-9984daee2f30)
@@ -87,7 +88,7 @@ Even though wmiexec.py is stealthier, it can be detected by:
 
 The command `cmd.exe /Q /c cmd.exe whoami 1> \127.0.0.1\ADMINS\_1725853925.0842316 2>&1` executed by wmiexec.py runs the whoami command on the target machine and redirects both its output and errors to a file on a local administrative share (127.0.0.1\ADMINS\). This allows wmiexec.py to execute commands remotely and capture their results through WMI, utilizing administrative shares for data collection and evasion.
 
-<img wid<img width="455" alt="9" src="https://github.com/user-attachments/assets/61aa9180-3964-44c7-b74c-b420cee0f0a6">
+<img width="455" alt="9" src="https://github.com/user-attachments/assets/61aa9180-3964-44c7-b74c-b420cee0f0a6">
 *   **Analyzing Windows Login Activities:** Check Event ID 4624 for unusual login patterns that may indicate remote command execution.
 *   **Reviewing WMI Event Logs:** Look for Event ID 4688 to detect remote command executions.
 
@@ -96,10 +97,12 @@ The command `cmd.exe /Q /c cmd.exe whoami 1> \127.0.0.1\ADMINS\_1725853925.08423
 ### [](#header-3)Post-Execution Steps with `wmiexec.py`
 
 Once access is gained, you can perform various tasks:
-**  Dump Credentials:** Use tools like Mimikatz or secretsdump.py.
-**  Enable Persistence:** Create new users or scheduled tasks.
-**  Gather Network Information:** Use commands like netstat, ipconfig, or arp etc..
-**  Run certutil:** Interact with the Certificate Authority or download payloads.
+
+*   **Enable Persistence:** Create new users or scheduled tasks.
+*   **Dump Credentials:** Use tools like Mimikatz or secretsdump.py.
+*   **Gather Network Information:** Use commands like netstat, ipconfig, or arp etc..
+*   **Run certutil:** Interact with the Certificate Authority or download payloads.
+
 
 
 
