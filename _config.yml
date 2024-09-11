@@ -1,0 +1,42 @@
+title: R4M1_Labs
+description: "A Jekyll Blog Theme For Hackers"
+author:
+  name: "R4M1"
+  email: "ramazanmuratdagi1@gmail.com"
+
+baseurl: /
+
+source: .
+destination: ./_site
+permalink: /:title
+paginate: 3
+paginate_path: /page/:num/
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+future: true
+plugins:
+  - jekyll-seo-tag
+  - jekyll-paginate
+  - jekyll-sitemap
+
+# Custom variables
+owner : "R4M1"
+year : "2024"
+
+# Social Media Links
+social:
+  linkedin:
+    label: "LinkedIn"
+    icon: "fab fa-linkedin"
+    url: "https://www.linkedin.com/in/ramazan-muratdagi/"
+  github:
+    label: "GitHub"
+    icon: "fab fa-github"
+    url: "https://github.com/r4m1007"
