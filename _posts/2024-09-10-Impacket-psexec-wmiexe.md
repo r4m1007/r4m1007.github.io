@@ -19,8 +19,7 @@ Impacket is a collection of Python libraries designed for network protocols like
 
 ### [](#header-3) What is **psexec.py**
 
-
-<img width="549" alt="1" src="https://github.com/user-attachments/assets/85147365-283d-4509-ba69-a8e1e7f0750e">
+<img width="549" alt="1" src="https://github.com/user-attachments/assets/51468fed-5388-4e4e-8db4-539f0e8a9c31">
 
 
 `psexec.py` is a tool that replicates Microsoft’s PsExec functionality, allowing remote command execution over SMB. Here’s how it operates:
