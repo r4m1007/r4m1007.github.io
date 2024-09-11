@@ -31,8 +31,7 @@ Impacket is a collection of Python libraries designed for network protocols like
 
 ### [](#header-3) How to detect **psexec.py**
 
-### ![2](https://github.com/user-attachments/assets/7f54f869-4f54-4160-aee2-721774b8e1ec)
-
+### <img width="549" alt="1" src="https://github.com/user-attachments/assets/10a3b9b9-fe20-4ef7-a080-523cb2ac8e30">
 
 ### ![3](https://github.com/user-attachments/assets/28994abe-26f0-41f4-9202-2a725709837e)
 *   Service Creation: Logs in Windows Event ID 7045
