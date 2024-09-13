@@ -89,7 +89,7 @@ To detect `psexec.py` usage, monitor Windows Event ID 7045 for the installation 
 ### [](#header-4) Detectability and Mitigation
 
 
-To detect `wmiexec.py`, monitor network traffic on ports 135 (RPC) and 445 (SMB) for unusual activity, check for suspicious command lines involving wmic.exe or powershell.exe with WMI arguments, and watch for commands targeting local admin shares. Additionally, track Windows login events (Event ID 4624) for unexpected or high-privilege logins, as these can indicate potential remote command execution.
+To detect `wmiexec.py`, monitor network traffic on ports 135 RPC and 445 SMB for unusual activity, check for suspicious command lines involving wmic.exe or powershell.exe with WMI arguments, and watch for commands targeting local admin shares. Additionally, track Windows login events (Event ID 4624) for unexpected or high-privilege logins, as these can indicate potential remote command execution.
 
 Even though wmiexec.py is stealthier, it can be detected by:
 
