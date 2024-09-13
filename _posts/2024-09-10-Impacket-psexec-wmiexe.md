@@ -14,6 +14,7 @@ _This post delves into the technical functionalities of Impacket's psexec.py and
 
 Impacket is a collection of Python libraries designed for working with network protocols such as SMB, WMI, and NTLM. These tools are crucial for various operations, including lateral movement, privilege escalation, and credential harvesting. In this post, I focus on two key Impacket tools: `psexec.py` and `wmiexec.py`
 
+<img width="603" alt="impacket_" src="https://github.com/user-attachments/assets/f463c0e8-60e8-470d-b17c-d062c82ffbb8">
 
 
 
