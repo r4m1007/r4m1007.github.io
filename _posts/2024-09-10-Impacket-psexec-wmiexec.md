@@ -16,21 +16,20 @@ Impacket is a collection of Python libraries designed for working with network p
 
 <img width="603" alt="impacket_" src="https://github.com/user-attachments/assets/f463c0e8-60e8-470d-b17c-d062c82ffbb8">
 
-#### [](#header-4) Impacket's post-exploitation capabilities:
+*   #### [](#header-4) Impacket's post-exploitation capabilities:
 
 *   Lateral Movement: Allows attackers to move between systems in a network using SMB, WMI, and DCOM.
-    Tools: `wmiexec.py`, `smbexec.py`, `dcomexec.py`
+    `wmiexec.py`, `smbexec.py`, `dcomexec.py`
 
 *   Remote Code Execution: Tools like `wmiexec.py`, `smbexec.py`, and `psexec.py` enable running commands on remote machines.
 
-*   Credential Dumping: Extracts credentials for further attacks, like pass-the-hash or pass-the-ticket.
-    Tools: `secretsdump.py`
+*   Credential Dumping: Extracts credentials for further attacks, like pass-the-hash or pass-the-ticket. secretsdump.py`
 
 *   Kerberos Attacks: Facilitates attacks like pass-the-ticket or forging golden tickets.
-    Tools: `getTGT.py`, `ticketer.py`, `kerberoast.py`
+    `getTGT.py`, `ticketer.py`, `kerberoast.py`
 
 *   SMB Relay: Relays authentication requests to gain access to other systems and escalate privileges.
-    Tools: `smbrelayx.py`, `ntlmrelayx.py`
+    `smbrelayx.py`, `ntlmrelayx.py`
 
 ### [](#header-3) What is **psexec.py**
 
