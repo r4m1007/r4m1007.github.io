@@ -12,11 +12,29 @@ _This post delves into the technical functionalities of Impacket's psexec.py and
 
 ## [](#header-3) Understanding Impacket
 
-Impacket is a collection of Python libraries designed for working with network protocols such as SMB, WMI, and NTLM. These tools are crucial for various operations, including lateral movement, privilege escalation, and credential harvesting. In this post, I focus on two key Impacket tools: `psexec.py` and `wmiexec.py`
+Impacket is a collection of Python libraries designed for working with network protocols such as SMB, WMI, and NTLM. These tools are crucial for various operations, including lateral movement, privilege escalation and more. In this post, I focus on two key Impacket tools: `psexec.py` and `wmiexec.py`
 
 <img width="603" alt="impacket_" src="https://github.com/user-attachments/assets/f463c0e8-60e8-470d-b17c-d062c82ffbb8">
 
+Impacket's post-exploitation capabilities:
 
+Lateral Movement: Allows attackers to move between systems in a network using SMB, WMI, and DCOM.
+
+Tools: `wmiexec.py`, `smbexec.py`, `dcomexec.py`
+Remote Code Execution: Tools like `wmiexec.py`, `smbexec.py`, and `psexec.py` enable running commands on remote machines.
+
+Credential Dumping: Extracts credentials for further attacks, like pass-the-hash or pass-the-ticket.
+Tools: `secretsdump.py`
+Kerberos Attacks: Facilitates attacks like pass-the-ticket or forging golden tickets for network access.
+Tools: `getTGT.py`, `ticketer.py`, `kerberoast.py`
+Service Manipulation: Enables starting, stopping, or creating services on remote systems to maintain control.
+
+Tools: `smbexec.py`, `psexec.py`, `wmiexec.py`
+Data Exfiltration: Helps move stolen data from compromised machines over protocols like SMB.
+Tools: `smbclient.py`
+SMB Relay: Relays authentication requests to gain access to other systems and escalate privileges.
+
+Tools: `smbrelayx.py`, `ntlmrelayx.py`
 
 ### [](#header-3) What is **psexec.py**
 
