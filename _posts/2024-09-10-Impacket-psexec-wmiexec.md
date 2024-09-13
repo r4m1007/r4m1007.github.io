@@ -23,7 +23,7 @@ Impacket is a collection of Python libraries designed for working with network p
 
 *   Remote Code Execution: Tools like `wmiexec.py`, `smbexec.py`, and `psexec.py` enable running commands on remote machines.
 
-*   Credential Dumping: Extracts credentials for further attacks, like pass-the-hash or pass-the-ticket. secretsdump.py`
+*   Credential Dumping: Extracts credentials for further attacks, like pass-the-hash or pass-the-ticket. `secretsdump.py`
 
 *   Kerberos Attacks: Facilitates attacks like pass-the-ticket or forging golden tickets.
     `getTGT.py`, `ticketer.py`, `kerberoast.py`
