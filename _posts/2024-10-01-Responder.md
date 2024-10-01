@@ -1,5 +1,5 @@
 ---
-title: Uncovering LLMNR and NBT-NS Poisoning Attacks and Abusing WebDAV with Responder: From Exploitation to Defense
+title: Uncovering LLMNR and NBT-NS Poisoning Attacks and Abusing WebDAV with Responder; From Exploitation to Defense
 
 published: true
 ---
