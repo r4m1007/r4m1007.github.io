@@ -23,7 +23,6 @@ In this blog, we’ll demonstrate how these poisoning attacks work using Respond
 The common flaw across LLMNR, NBT-NS, and mDNS is their inherent trust in responses from any network device. This lack of source validation allows attackers to execute MITM attacks, impersonate critical network resources, or capture NTLM authentication hashes. Once a machine authenticates to the attacker’s spoofed resource, it often sends NTLM credentials that can be cracked offline, granting the attacker unauthorized access to systems. 
 
 
-<img width="603" alt="impacket_" src="https://github.com/user-attachments/assets/f463c0e8-60e8-470d-b17c-d062c82ffbb8">
 
 ### [](#header-3) Responder and Its Role in Poisoning Attacks:
 
