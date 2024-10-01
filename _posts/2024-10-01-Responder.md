@@ -5,9 +5,9 @@ published: true
 ---
 
 
-_In modern networks, protocols like LLMNR (Link-Local Multicast Name Resolution), NBT-NS (NetBIOS Name Service), and mDNS (Multicast DNS) are often used for local name resolution. While they help devices communicate in environments without DNS, these protocols also present significant security risks. Attackers can leverage tools like `Responder` to perform poisoning attacks, capturing sensitive credentials such as NTLM hashes.
+_In modern networks, protocols like LLMNR (Link-Local Multicast Name Resolution), NBT-NS (NetBIOS Name Service), and mDNS (Multicast DNS) are often used for local name resolution. While they help devices communicate in environments without DNS, these protocols also present significant security risks. Attackers can leverage tools like `Responder` to perform poisoning attacks, capturing sensitive credentials such as NTLM hashes_.
 
-In this blog, we’ll demonstrate how these poisoning attacks work using Responder, discuss how WebDAV played a role in capturing an NTLMv2 hash, and analyze the captured traffic. We’ll also provide detection and prevention strategies to secure your network._
+In this blog, we’ll demonstrate how these poisoning attacks work using Responder, discuss how WebDAV played a role in capturing an NTLMv2 hash, and analyze the captured traffic. We’ll also provide detection and prevention strategies to secure your network.
 
 
 
@@ -41,7 +41,16 @@ Responder can al so perform other attacks, such as intercepting WPAD (Web Proxy 
 
 ### [](#header-3) Running **Responder**
 
-<img width="549" alt="1" src="https://github.com/user-attachments/assets/51468fed-5388-4e4e-8db4-539f0e8a9c31">
+<img width="600" alt="responder1" src="https://github.com/user-attachments/assets/0bfe6da1-86b8-420e-9097-6945fdc8ee0d">
+
+-I eth0: Specifies the network interface to listen on.
+-w: Enables WPAD poisoning, which captures credentials from automatic proxy configuration.
+-d: Enables DHCP poisoning, allowing Responder to offer a fake IP to devices requesting an IP address.
+
+After running this command, Responder will listen for LLMNR, NBT-NS, mDNS, and WPAD queries. When a victim machine queries for a non-existent network share _\\red-teamDC_, Responder will send a poisoned response, causing the victim to authenticate with Responder.
+
+<img width="600" alt="responder2" src="https://github.com/user-attachments/assets/236772c7-5c8c-4c2a-9c4c-17dcc934267d">
+
 
 
 `psexec.py` is a tool that replicates Microsoft’s PsExec functionality, allowing remote command execution over SMB. Here’s how it operates:
