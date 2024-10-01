@@ -76,15 +76,6 @@ To detect `psexec.py` usage, monitor Windows Event ID 7045 for the installation 
 ### [](#header-3) What is **wmiexec.py**
 
 
-
-
-`wmiexec.py` uses Windows Management Instrumentation (WMI) for command execution without file uploads. Here’s how it works:
-
-1.	**Executes Commands In-Memory**: Runs commands directly in memory, avoiding disk writes.
-2.	**Uses RPC and WMI Service:** Relies on port 135 for WMI communications.
-3.	**No New Files or Services**: Avoids detection through file-based and service-based mechanisms.
-
-
   ![6](https://github.com/user-attachments/assets/ea775741-5f4a-48c5-8a32-1803f1e55fcd)
 *   Defender did not detect `wmiexec.py` due to its fileless operation, making it stealthier than `psexec.py`
 
