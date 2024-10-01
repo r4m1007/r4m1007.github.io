@@ -84,7 +84,6 @@ To detect `psexec.py` usage, monitor Windows Event ID 7045 for the installation 
 `psexec.py` triggers antivirus/EDR alerts by creating files and services. Conversely, `wmiexec.py` avoids file creation, making it less detectable by traditional AV solutions. However, it can still be detected via WMI logs and unusual port traffic.
 
 
-
 ### [](#header-4) Detectability and Mitigation
 
 
