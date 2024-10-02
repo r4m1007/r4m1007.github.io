@@ -55,7 +55,7 @@ WebDAV is a protocol used for remote file management over HTTP(S).
 
 Responder captures the NTLMv2 hash and logs it in a file 
 
-<img width="600" alt="responder1" src="https://github.com/user-attachments/assets/a439d61e-3a3d-4f06-899e-57b7ea0b6b39">
+<img width="750" alt="responder1" src="https://github.com/user-attachments/assets/a439d61e-3a3d-4f06-899e-57b7ea0b6b39">
 
 *   The file WebDAV-NTLMv2-*.txt contains the captured NTLMv2 hash.
 
@@ -102,7 +102,7 @@ This is where things get interesting. I see NTLM authentication attempts capture
 ![ntlmssp](https://github.com/user-attachments/assets/d6e82059-f4e7-4b29-a9b7-2124e33078b0)
 
 
-*   The NTLM authentication process begins with the client (victim) sending an NTLMSSP_NEGOTIATE message to the server (attacker) to indicate that it wants to use NTLM for authentication. The attacker responds with an NTLMSSP_CHALLENGE message, which includes a unique challenge value. The client uses this challenge and its own credentials to compute a response and sends back an NTLMSSP_AUTH message containing the NTLMv2 hash.
+*   The NTLM authentication process begins with the victim sending an NTLMSSP_NEGOTIATE message to the attacker to indicate that it wants to use NTLM for authentication. The attacker responds with an NTLMSSP_CHALLENGE message, which includes a unique challenge value. The client uses this challenge and its own credentials to compute a response and sends back an NTLMSSP_AUTH message containing the NTLMv2 hash.
 
 ![webdav-ntlmssp](https://github.com/user-attachments/assets/2d0db28f-4176-4fbe-b589-2561932657ba)
 
