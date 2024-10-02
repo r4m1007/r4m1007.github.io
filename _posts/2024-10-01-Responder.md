@@ -42,22 +42,22 @@ Responder can al so perform other attacks, such as intercepting WPAD (Web Proxy 
 
 <img width="600" alt="responder1" src="https://github.com/user-attachments/assets/0bfe6da1-86b8-420e-9097-6945fdc8ee0d">
 
--I eth0: Specifies the network interface to listen on.
--w: Enables WPAD poisoning, which captures credentials from automatic proxy configuration.
--d: Enables DHCP poisoning, allowing Responder to offer a fake IP to devices requesting an IP address.
+*   -I eth0: Specifies the network interface to listen on.
+*   -w: Enables WPAD poisoning, which captures credentials from automatic proxy configuration.
+*   -d: Enables DHCP poisoning, allowing Responder to offer a fake IP to devices requesting an IP address.
 
 After running this command, Responder will listen for LLMNR, NBT-NS, mDNS, and WPAD queries. When a victim machine queries for a non-existent network share _\\red-teamDC_, Responder will send a poisoned response, causing the victim to authenticate with Responder.
 
 <img width="800" alt="responder2" src="https://github.com/user-attachments/assets/236772c7-5c8c-4c2a-9c4c-17dcc934267d">
 
-The provided Responder output demonstrates a successful network poisoning attack where the attacker used LLMNR, NBT-NS, and mDNS poisoning to capture an NTLMv2 hash via WebDAV.
+*   The provided Responder output demonstrates a successful network poisoning attack where the attacker used LLMNR, NBT-NS, and mDNS poisoning to capture an NTLMv2 hash via WebDAV.
 WebDAV is a protocol used for remote file management over HTTP(S).
 
 Responder captures the NTLMv2 hash and logs it in a file 
 
 <img width="600" alt="responder1" src="https://github.com/user-attachments/assets/a439d61e-3a3d-4f06-899e-57b7ea0b6b39">
 
-The file WebDAV-NTLMv2-*.txt contains the captured NTLMv2 hash.
+*   The file WebDAV-NTLMv2-*.txt contains the captured NTLMv2 hash.
 
 ### [](#header-3) Cracking the captured NTLMv2 with **Hashcat**
 
