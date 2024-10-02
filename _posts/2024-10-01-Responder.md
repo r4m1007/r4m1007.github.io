@@ -51,7 +51,7 @@ After running this command, Responder will listen for LLMNR, NBT-NS, mDNS, and W
 <img width="800" alt="responder2" src="https://github.com/user-attachments/assets/236772c7-5c8c-4c2a-9c4c-17dcc934267d">
 
 The provided Responder output demonstrates a successful network poisoning attack where the attacker used LLMNR, NBT-NS, and mDNS poisoning to capture an NTLMv2 hash via WebDAV.
-
+WebDAV is a protocol used for remote file management over HTTP(S).
 
 Responder captures the NTLMv2 hash and logs it in a file 
 
@@ -59,29 +59,40 @@ Responder captures the NTLMv2 hash and logs it in a file
 
 The file WebDAV-NTLMv2-*.txt contains the captured NTLMv2 hash.
 
+### [](#header-3) Cracking the captured NTLMv2 with **Hashcat**
 
-`psexec.py` is a tool that replicates Microsoft’s PsExec functionality, allowing remote command execution over SMB. Here’s how it operates:
+Save the hash from the log file (WebDAV-NTLMv2-*.txt).
 
-1.	**Creates a Remote Service:** Uploads a randomly named executable to the hidden _ADMIN$_ share on the target machine.
-2.	**Registers the Service:** Uses RPC and the Service Control Manager to register and start the service, running with elevated privileges.
-3.	**Communicates via Named Pipes:** After service start, it uses named pipes for data communication.
+Run Hashcat with the following command:
+
+hashcat -m 5600 -a 0 WebDAV-NTLMv2-*.txt mywords.txt
+-m 5600: Specifies the NTLMv2 hash type.
+-a 0: Specifies a dictionary attack.
+
+<img width="830" alt="hashcat" src="https://github.com/user-attachments/assets/a1d32fed-0fac-4494-a3e8-f9adffdc68b9">
+
+If successful, Hashcat will display the cracked plaintext password, which can be used for further attacks.
 
 
-### [](#header-3) How to detect **psexec.py**
+### [](#header-3) How to detect **Responder**
 
-To detect `psexec.py` usage, monitor Windows Event ID 7045 for the installation of randomly named services. This event indicates a new service, often used for remote execution with SYSTEM privileges. Additionally, check for SMB traffic on port 445, look for remote process execution. Use Event IDs 4624 and 4688 to monitor for abnormal logon and process creation events.
+As I dive into the Wireshark logs, I see multiple queries and responses that indicate the poisoning attack was successful.
 
-### <img width="549" alt="1" src="https://github.com/user-attachments/assets/10a3b9b9-fe20-4ef7-a080-523cb2ac8e30">
+![nbt-wireshark](https://github.com/user-attachments/assets/6680837c-672f-4667-acbd-863b29fc2965)
 
-### ![3](https://github.com/user-attachments/assets/94ede26b-3520-4f0d-b077-75db732a5418)
-*   Service Creation: Logs in Windows Event ID 7045
+*   The victim, 192.168.50.208, is sending a Name query for RED-TEAMDC. The attacker’s IP x.x.x.251 responds, claiming to be RED-TEAMDC.
+
+  
+![llmnr](https://github.com/user-attachments/assets/572236cb-3322-4ef2-a3a2-255cc77645f8)
+*   The victim is broadcasting LLMNR queries because it couldn’t resolve the hostname using DNS. The attacker IP x.x.x.251 sends a fake response, directing the victim to connect to it instead of the legitimate host.
+
 
 
 ### ![4](https://github.com/user-attachments/assets/d99c087e-210a-40ae-8d3d-a9894bf31c44)
-*   Monitored SMB traffic on port 445
+*   Windows Defender flagged and blocked psexec.py due to the file-based activity and new service creation.
 
 ### ![5](https://github.com/user-attachments/assets/82193ee5-46cb-4f57-abcc-42b72e9bca74)
-*   Windows Defender flagged and blocked psexec.py due to the file-based activity and new service creation.
+
 
 
 
