@@ -74,7 +74,7 @@ hashcat -m 5600 -a 0 WebDAV-NTLMv2-*.txt mywords.txt
 If successful, Hashcat will display the cracked plaintext password, which can be used for further attacks.
 
 
-### [](#header-3) How to detect **Responder**
+### [](#header-3) Detection and Mitigation
 
 As I dive into the Wireshark logs, I see multiple queries and responses that indicate the poisoning attack was successful.
 
@@ -83,72 +83,50 @@ As I dive into the Wireshark logs, I see multiple queries and responses that ind
 *   The victim, 192.168.50.208, is sending a Name query for RED-TEAMDC. The attacker’s IP x.x.x.251 responds, claiming to be RED-TEAMDC.
 
   
+
+  
 ![llmnr](https://github.com/user-attachments/assets/572236cb-3322-4ef2-a3a2-255cc77645f8)
 *   The victim is broadcasting LLMNR queries because it couldn’t resolve the hostname using DNS. The attacker IP x.x.x.251 sends a fake response, directing the victim to connect to it instead of the legitimate host.
+  
 
 
+![mdns](https://github.com/user-attachments/assets/dc11729f-4e5b-412c-8b76-4fa9a5c0a4bf)
 
-### ![4](https://github.com/user-attachments/assets/d99c087e-210a-40ae-8d3d-a9894bf31c44)
-*   Windows Defender flagged and blocked psexec.py due to the file-based activity and new service creation.
+*   The victim’s IP sends an mDNS query asking for red-teamdc.local. The attacker IP replies with a fake mDNS response, pretending to be the requested host.
 
-### ![5](https://github.com/user-attachments/assets/82193ee5-46cb-4f57-abcc-42b72e9bca74)
+### [](#header-3) NTLM Authentication over WebDAV Analysis
+
+This is where things get interesting. I see NTLM authentication attempts captured in the logs over HTTP, specifically using the WebDAV protocol. The victim machine tries to access a resource using WebDAV (PROPFIND method) and ends up sending its NTLMv2 hash.
+
+![ntlmssp](https://github.com/user-attachments/assets/d6e82059-f4e7-4b29-a9b7-2124e33078b0)
 
 
+*   The NTLM authentication process begins with the client (victim) sending an NTLMSSP_NEGOTIATE message to the server (attacker) to indicate that it wants to use NTLM for authentication. The attacker responds with an NTLMSSP_CHALLENGE message, which includes a unique challenge value. The client uses this challenge and its own credentials to compute a response and sends back an NTLMSSP_AUTH message containing the NTLMv2 hash.
+
+![webdav-ntlmssp](https://github.com/user-attachments/assets/2d0db28f-4176-4fbe-b589-2561932657ba)
+
+*   The 401 Unauthorized message typically indicates that the initial authentication attempt failed, prompting the client to resend its credentials. In an NTLM-based attack, the 401 response from the WebDAV server is expected and part of the process for capturing the NTLM hash.
+
+*  200 OK: This response means the authentication was accepted, which typically only happens when the attacker has a valid hash or password to authenticate successfully.
 
 
 ---
 
+### [](#header-3)Preventing These Attacks
 
 
-### [](#header-3) What is **wmiexec.py**
-
-
-  ![6](https://github.com/user-attachments/assets/ea775741-5f4a-48c5-8a32-1803f1e55fcd)
-*   Defender did not detect `wmiexec.py` due to its fileless operation, making it stealthier than `psexec.py`
-
-### [](#header-3) Why Was `psexec.py` Blocked but `wmiexec.py` Wasn't
-
-`psexec.py` triggers antivirus/EDR alerts by creating files and services. Conversely, `wmiexec.py` avoids file creation, making it less detectable by traditional AV solutions. However, it can still be detected via WMI logs and unusual port traffic.
-
-
-### [](#header-4) Detectability and Mitigation
-
-
-To detect `wmiexec.py`, monitor network traffic on ports 135 RPC and 445 SMB for unusual activity, check for suspicious command lines involving wmic.exe or powershell.exe with WMI arguments, and watch for commands targeting local admin shares. Additionally, track Windows login events (Event ID 4624) for unexpected or high-privilege logins, as these can indicate potential remote command execution.
-
-Even though wmiexec.py is stealthier, it can be detected by:
-
-![7](https://github.com/user-attachments/assets/8715f3ad-9813-4f2a-bd98-336caf683f5e)
-
-*   **Monitoring Port 135 and 445 Traffic:** Look for unusual activity.
-
-![8](https://github.com/user-attachments/assets/5cd7a100-1ba3-4201-9453-9984daee2f30)
-*   **Checking Command-Line Logs:** Event Logs can reveal suspicious commands.
-
-The command `cmd.exe /Q /c cmd.exe whoami 1> \127.0.0.1\ADMINS\_1725853925.0842316 2>&1` executed by wmiexec.py runs the whoami command on the target machine and redirects both its output and errors to a file on a local administrative share (127.0.0.1\ADMINS\). This allows wmiexec.py to execute commands remotely and capture their results through WMI, utilizing administrative shares for data collection and evasion.
-
-<img width="455" alt="9" src="https://github.com/user-attachments/assets/61aa9180-3964-44c7-b74c-b420cee0f0a6">
-*   **Analyzing Windows Login Activities:** Check Event ID 4624 for unusual login patterns that may indicate remote command execution.
-*   **Reviewing WMI Event Logs:** Look for Event ID 4688 to detect remote command executions.
-
-
-
-### [](#header-3)Post-Execution Steps with `wmiexec.py`
-
-Once access is gained, you can perform various tasks:
-
-*   **Enable Persistence:** Create new users or scheduled tasks.
-*   **Dump Credentials:** Use tools like Mimikatz or secretsdump.py.
-*   **Gather Network Information:** Use commands like netstat, ipconfig, or arp etc..
-*   **Run certutil:** Interact with the Certificate Authority or download payloads.
+*   **Disable LLMNR and NBT-NS:** Use Group Policy to disable these protocols on all endpoints.
+*   **Block mDNS:** Restrict mDNS on Windows machines and non-Windows devices.(can have side effects depending on the environment and use cases)
+*   **Disable WebDAV:**  Disable the WebClient service on Windows to prevent WebDAV attacks.
+*   **Implement Strong Authentication:** Use Kerberos instead of NTLM and implement multi-factor authentication (MFA).
 
 
 
 
 ### [](#header-3) Conclusion
 
-`wmiexec.py` offers a stealthy approach to remote command execution by leveraging WMI. It uses WMI’s built-in capabilities to execute commands on target machines without relying on traditional remote access tools, which helps in evading some detection methods. This technique minimizes visibility compared to more overt tools like psexec.py. By redirecting output to administrative shares, wmiexec.py further reduces the likelihood of detection.
+The vulnerabilities in protocols like LLMNR, NBT-NS, and mDNS highlight the importance of understanding how attackers can exploit them to launch MITM attacks and capture sensitive credentials. With tools like Responder, adversaries can easily take advantage of these weak points in the network, redirecting legitimate traffic and gathering NTLM hashes that can be cracked or used in further attacks. Our analysis of the captured traffic using Wireshark reveals how these poisoning attacks unfold, and we see the role that WebDAV can play in NTLM-based authentication scenarios.
 
-Despite its stealthiness, wmiexec.py is not undetectable. Effective detection involves monitoring WMI traffic on ports 135 RPC and 445 SMB for unusual patterns. Analyzing command-line arguments for tools like wmic.exe and powershell.exe and reviewing Windows Event IDs 5861 (WMI Event) and 4688 (Process Creation) can reveal suspicious activities. 
+To effectively defend against these threats, it’s crucial to disable or limit the use of these legacy protocols, implement strong authentication mechanisms, and continuously monitor network traffic for signs of unusual behavior.
 
 
