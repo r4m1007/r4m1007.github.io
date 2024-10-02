@@ -61,17 +61,18 @@ Responder captures the NTLMv2 hash and logs it in a file
 
 ### [](#header-3) Cracking the captured NTLMv2 with **Hashcat**
 
-Save the hash from the log file (WebDAV-NTLMv2-*.txt).
+*   Save the hash from the log file (WebDAV-NTLMv2-*.txt).
 
 Run Hashcat with the following command:
-
+```
 hashcat -m 5600 -a 0 WebDAV-NTLMv2-*.txt mywords.txt
--m 5600: Specifies the NTLMv2 hash type.
--a 0: Specifies a dictionary attack.
+```
+*   -m 5600: Specifies the NTLMv2 hash type.
+*   -a 0: Specifies a dictionary attack.
 
 <img width="830" alt="hashcat" src="https://github.com/user-attachments/assets/a1d32fed-0fac-4494-a3e8-f9adffdc68b9">
 
-If successful, Hashcat will display the cracked plaintext password, which can be used for further attacks.
+*   If successful, Hashcat will display the cracked plaintext password, which can be used for further attacks.
 
 
 ### [](#header-3) Detection and Mitigation
