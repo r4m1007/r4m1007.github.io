@@ -1,46 +1,55 @@
 ---
-title: Impacket’s wmiexec.py and psexec.py; How They Work and How to Detect
+title: Exploring BloodHound for Active Directory Enumeration – A Red & Blue Team Perspective
 
-published: false
+published: True
 ---
 
 
-_This post delves into the technical functionalities of Impacket's psexec.py and wmiexec.py, outlining their use cases, detection methods, and my empirical findings during their deployment. The objective is to provide a detailed analysis from a purple team perspective, focusing on detection and evasion strategies._
+_In the world of cybersecurity, Active Directory enumeration plays a crucial role in both offensive and defensive security operations. Attackers seek to identify paths to escalate privileges and move laterally, while defenders aim to detect and block unauthorized access. One of the most powerful tools for Active Directory reconnaissance is BloodHound.
+
+In this blog, I will share my experience using BloodHound in my home lab, walking through installation, execution, detection evasion techniques, and visualizing attack paths. This guide is useful for Red Teamers looking to improve their enumeration strategies and Blue Teamers seeking to detect and mitigate AD enumeration._
 
 
 
 
-## [](#header-3) Understanding Impacket
+## [](#header-3) Understanding Bloodhound
 
-Impacket is a collection of Python libraries designed for working with network protocols such as SMB, WMI, and NTLM. These tools are crucial for various operations, including lateral movement, privilege escalation and more. In this post, I focus on two key Impacket tools: `psexec.py` and `wmiexec.py`
 
-<img width="603" alt="impacket_" src="https://github.com/user-attachments/assets/f463c0e8-60e8-470d-b17c-d062c82ffbb8">
+BloodHound is an Active Directory attack path visualization tool that helps attackers and defenders analyze and understand relationships within AD environments. It maps users, computers, groups, and permissions, allowing security teams to identify privilege escalation and lateral movement opportunities.
 
-### [](#header-3) Impacket's post-exploitation capabilities:
+### [](#header-3) Why use Bloodhound
 
-*   Lateral Movement: Allows attackers to move between systems in a network using SMB, WMI, and DCOM.
-    `wmiexec.py`, `smbexec.py`, `dcomexec.py`
+### [](#header-4) Red Team Perspective:
 
-*   Remote Code Execution: Tools like `wmiexec.py`, `smbexec.py`, and `psexec.py` enable running commands on remote machines.
+*  Identify attack paths leading to Domain Admin.
 
-*   Credential Dumping: Extracts credentials for further attacks, like pass-the-hash or pass-the-ticket. `secretsdump.py`
+*  Enumerate privileged groups, service accounts, and delegation settings.
 
-*   Kerberos Attacks: Facilitates attacks like pass-the-ticket or forging golden tickets.
-    `getTGT.py`, `ticketer.py`, `kerberoast.py`
+*  Find Kerberoastable accounts and password reuse scenarios.
 
-*   SMB Relay: Relays authentication requests to gain access to other systems and escalate privileges.
-    `smbrelayx.py`, `ntlmrelayx.py`
+### [](#header-4) Blue Team Perspective:
 
-### [](#header-3) What is **psexec.py**
+*   Track privilege escalation paths before attackers do.
+
+*   Harden AD by removing dangerous misconfigurations.
+
+
+### [](#header-3) Installing **Bloodhound**
 
 <img width="549" alt="1" src="https://github.com/user-attachments/assets/51468fed-5388-4e4e-8db4-539f0e8a9c31">
 
+Bloodhound relies on `Neo4j` a graph database that stores and analyzes AD relationships. 
 
-`psexec.py` is a tool that replicates Microsoft’s PsExec functionality, allowing remote command execution over SMB. Here’s how it operates:
+1.	**Install Neo4j** sudo apt update && sudo apt install neo4j -y
+2.	**Start and Configure Neo4j:** sudo systemctl start neo4j - sudo systemctl enable neo4j
 
-1.	**Creates a Remote Service:** Uploads a randomly named executable to the hidden _ADMIN$_ share on the target machine.
-2.	**Registers the Service:** Uses RPC and the Service Control Manager to register and start the service, running with elevated privileges.
-3.	**Communicates via Named Pipes:** After service start, it uses named pipes for data communication.
+![bh_login](https://github.com/user-attachments/assets/646fc7cc-6d66-4218-bb08-055288dc21a3)
+
+
+
+*   Open a browser and go to http://localhost:7474.
+*   Login: Default credentials (neo4j / neo4j)
+*   Change the password when prompted
 
 
 ### [](#header-3) How to detect **psexec.py**
