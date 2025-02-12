@@ -1,0 +1,171 @@
+---
+title: Exploring BloodHound for Active Directory Enumeration – A Red & Blue Team Perspective
+
+published: True
+---
+
+
+_I’ve been diving deep into Active Directory enumeration in my home lab, and I wanted to share my experience using BloodHound—a tool that helps visualize and analyze relationships within an AD environment. Whether you’re on the red team looking for attack paths or on the blue team trying to detect and prevent them, BloodHound is a game-changer_
+
+_This blog is all about my hands-on journey setting up BloodHound, collecting AD data, and analyzing potential attack paths. I’ll walk you through the entire process, from installation to detection techniques, while keeping it real with what worked, what didn’t, and what I learned along the way._
+
+
+
+
+## [](#header-3) Understanding Bloodhound
+
+
+BloodHound is an AD attack path mapping tool that red teamers use to identify privilege escalation routes, and blue teamers use to detect & fix security weaknesses.
+
+### [](#header-3) Why use Bloodhound
+
+### [](#header-4) Red Team Perspective:
+
+*  Identify attack paths leading to higher privileges.
+
+*  Enumerate privileged accounts, groups, and misconfigurations.
+
+*  Discover weak security settings that enable lateral movement.
+
+### [](#header-4) Blue Team Perspective:
+
+*  Helps defenders visualize attack paths that adversaries might exploit
+
+*  Assists in identifying risky permissions, excessive privileges, and misconfigurations
+*  Can be used to proactively harden AD and reduce attack surface
+
+
+### [](#header-3) Installing **Bloodhound**
+
+<img width="549" alt="1" src="https://github.com/user-attachments/assets/51468fed-5388-4e4e-8db4-539f0e8a9c31">
+
+Since I’m running everything from my Kali Linux machine, I had to set up both BloodHound and Neo4j (the graph database BloodHound uses to store and analyze AD data).
+
+1.	**Install Neo4j** sudo apt update && sudo apt install neo4j -y
+2.	**Start and Configure Neo4j:** sudo systemctl start neo4j - sudo systemctl enable neo4j
+
+![bh_login](https://github.com/user-attachments/assets/646fc7cc-6d66-4218-bb08-055288dc21a3)
+
+
+
+*   Open a browser and go to http://localhost:7687
+*   Login: Default credentials (neo4j / neo4j) - change the password when prompted
+
+### [](#header-3) Install **Bloodhound**
+
+*   wget https://github.com/BloodHound/releases/download/4.3.1/BloodHound-linux-x64.zip
+cd BloodHound
+unzip BloodHound-linux-x64.zip
+cd BloodHound-linux-x64
+BloodHound
+
+Running SharpHound on the Target Machine
+Now, here’s where things get interesting. BloodHound itself doesn’t collect AD data—that’s where SharpHound comes in.
+SharpHound has two versions:
+
+EXE version (SharpHound.exe)
+PowerShell version (SharpHound.ps1)
+ 
+
+$ can run on the non domain joined machine
+
+Once SharpHound finished running, I had a zip file containing multiple JSON files, each representing different AD objects:
+I then imported this zip into BloodHound’s GUI by simply dragging and dropping it in.
+At this point, BloodHound started parsing the relationships and I could finally visualize attack paths within my test AD environment.
+
+$ add that basically can export it dns tunneling or others..
+
+
+
+### [](#header-3) Finding Attack Paths & Blue Team Detection
+
+At this point, I had a fully populated BloodHound database showing users, groups, computers, and their permissions. Now the real fun begins—analyzing attack paths.
+
+
+![find_admins](https://github.com/user-attachments/assets/c618bbb7-18e3-4b14-944b-86c2a8ffb5d7)
+
+1. Domain Admins in HACKLAND.LOCAL. The yellow node represents the Domain Admins group, while the green nodes are users with Domain Admin privileges.
+
+![dcysnc](https://github.com/user-attachments/assets/bcdd2627-5dea-4812-bff3-1503432a16ce)
+
+
+
+2.  DCSync privileges in HACKLAND.LOCAL. Users and groups with DCSync rights (linked to the domain controller) can replicate credentials, allowing an attacker to steal NTLM hashes for all domain accounts. Blue teams should monitor Event ID 4662 and restrict DCSync permissions to prevent misuse.
+
+
+![image](https://github.com/user-attachments/assets/63715b3e-bdf3-49f1-bfc0-d226affa2d21)
+
+3. These Kerberoastable users have SPNs, meaning attackers can request Kerberos TGS tickets for them and attempt offline brute-force attacks to extract plaintext passwords. Service accounts like SQLSERVICE and SVC-WEBAPP often have weak or non-rotated passwords, making them prime targets for Kerberoasting. Blue teams should monitor Event ID 4769, enforce strong passwords, and consider Managed Service Accounts to reduce risk.
+
+![image](https://github.com/user-attachments/assets/3aa0d183-b457-487f-ae08-2eb03f08e63e)
+
+4. This Shortest Path to an Unconstrained Delegation System shows how an attacker can escalate privileges to R4M1-DC.HACKLAND.LOCAL, which has Unconstrained Delegation enabled. The GenericWrite, AdminTo, and CanRDP relationships indicate possible lateral movement paths. Attackers can steal Kerberos tickets (TGTs) from memory when high-privileged users log in. Blue teams should disable Unconstrained Delegation,
+
+
+You can also run different custom queries in BloodHound to find various attack paths, such as:
+
+Constrained Delegation – Finds systems that can impersonate users to specific services.
+Computers Allowed to Delegate for Another Computer – Identifies machines that can forward authentication, useful for Kerberos abuse.
+Computers Local Admin to Another Computer – Shows machines where an attacker with local admin rights can pivot.
+
+For more useful BloodHound queries, check out:
+https://gist.github.com/joeminicucci/d9fb42f03186f6aaa556cc5f961f537b
+https://github.com/CompassSecurity/BloodHoundQueries/blob/master/BloodHound_Custom_Queries/customqueries.json
+
+### <img width="549" alt="1" src="https://github.com/user-attachments/assets/10a3b9b9-fe20-4ef7-a080-523cb2ac8e30">
+
+### ![3](https://github.com/user-attachments/assets/94ede26b-3520-4f0d-b077-75db732a5418)
+*   Service Creation: Logs in Windows Event ID 7045
+
+
+### ![4](https://github.com/user-attachments/assets/d99c087e-210a-40ae-8d3d-a9894bf31c44)
+*   Monitored SMB traffic on port 445
+
+### ![5](https://github.com/user-attachments/assets/82193ee5-46cb-4f57-abcc-42b72e9bca74)
+*   Windows Defender flagged and blocked psexec.py due to the file-based activity and new service creation.
+
+
+
+---
+
+
+
+### [](#header-3) Detecting BloodHound in Your Environment
+
+So far, we've talked about how BloodHound works and how attackers use it to map Active Directory. Now, let’s go over how I detected BloodHound activity in my lab and how you can spot it in your environment.
+
+After running SharpHound on the compromised machine, I checked the Windows Security logs on my Domain Controller (DC) and found that my compromised user mdunbar was generating a high volume of Event ID 4662.
+
+This event, which logs Directory Service Access, showed bulk LDAP queries targeting different AD objects.
+
+User objects, Groups and OUs, Computers in the domain
+Seeing these high-frequency LDAP read events from a regular user account is a red flag that BloodHound was running.
+
+![4662](https://github.com/user-attachments/assets/494f3bbe-1eca-4fca-ae38-30b69a5c4c77)
+
+
+On the **network side**, monitor for:
+
+Unusual SMB Traffic – SharpHound may copy itself over SMB before execution.
+High LDAP query volume in network logs.
+SIEM rules detecting large numbers of LDAP queries from non-admin accounts.
+
+**Defensive Actions**:
+Monitor Event ID 4662 for bulk queries from non-admin users.
+Enable auditing for LDAP queries and Kerberos ticket requests.
+Investigate and disable compromised accounts immediately.
+
+After reconnaissance with BloodHound, attackers typically progress to Active Directory exploitation, such as privilege escalation, credential theft, or delegation abuse. To detect and disrupt their next move, it's crucial to monitor security events related to account modifications, privilege escalation, and unauthorized directory access.
+`wmiexec.py` uses Windows Management Instrumentation (WMI) for command execution without file uploads. Here’s how it works:
+
+1.	**Defensive Actions**: Runs commands directly in memory, avoiding disk writes.
+2.	**Uses RPC and WMI Service:** Relies on port 135 for WMI communications.
+3.	**No New Files or Services**: Avoids detection through file-based and service-based mechanisms.
+
+Conclusion: BloodHound – A Key Tool for AD Security
+After testing BloodHound in my home lab, I see how it’s a powerful tool for both attackers and defenders in Active Directory.
+
+🔴 Red Team: Easily map attack paths, find privilege escalation routes, and plan Kerberoasting, DCSync, or lateral movement.
+🔵 Blue Team: Gain visibility into AD misconfigurations, detect excessive privileges, and harden security before an attack.
+
+BloodHound is essential for understanding, testing, and securing AD environments. Whether you're attacking or defending, it helps uncover hidden security risks before they’re exploited.
