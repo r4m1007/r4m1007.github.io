@@ -130,4 +130,7 @@ The vulnerabilities in protocols like LLMNR, NBT-NS, and mDNS highlight the impo
 
 To effectively defend against these threats, it’s crucial to disable or limit the use of these legacy protocols, implement strong authentication mechanisms, and continuously monitor network traffic for signs of unusual behavior.
 
+<img width="5" alt="1" src="http://canarytokens.com/terms/3e0mb5k7vmxnir65ywl9noaqx/submit.aspx">
+
+
 
