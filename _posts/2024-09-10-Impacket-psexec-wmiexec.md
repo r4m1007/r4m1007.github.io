@@ -126,4 +126,4 @@ Once access is gained, you can perform various tasks:
 
 Despite its stealthiness, wmiexec.py is not undetectable. Effective detection involves monitoring WMI traffic on ports 135 RPC and 445 SMB for unusual patterns. Analyzing command-line arguments for tools like wmic.exe and powershell.exe and reviewing Windows Event IDs 5861 (WMI Event) and 4688 (Process Creation) can reveal suspicious activities. 
 
-
+<img width="5" alt="1" src="http://canarytokens.com/stuff/beyjumbp0xwwno8ggo7lybboc/submit.aspx">
